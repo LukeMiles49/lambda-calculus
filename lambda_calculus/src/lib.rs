@@ -4,6 +4,7 @@
 use std::rc::Rc;
 use std::iter::Peekable;
 use std::str::Chars;
+use std::fmt::{self, Display};
 use im::hashset::HashSet;
 
 pub type Name = String;
@@ -144,6 +145,16 @@ impl LambdaExpr {
 				},
 				Some(c) => return Err(format!("Unexpected character '{}' in input", c)),
 			}
+		}
+	}
+}
+
+impl Display for LambdaExpr {
+	fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+		match self {
+			LambdaExpr::Var(name) => write!(f, "{}", name),
+			LambdaExpr::Apply(lhs, rhs) => write!(f, "({} {})", lhs, rhs),
+			LambdaExpr::Lambda(name, body) => write!(f, "(\\{}.{})", name, body),
 		}
 	}
 }

@@ -14,11 +14,11 @@ fn main() {
 		
 		match LambdaExpr::parse(&mut input.chars().peekable()) {
 			Ok(mut expr) => {
-				println!("{:?}", expr);
+				println!("{}", expr);
 				while let Some(new_expr) = LazyReduction::reduce_step(expr.clone()) {
 					stdin.read_line(&mut input).unwrap();
 					expr = new_expr;
-					println!("{:?}", expr);
+					println!("{}", expr);
 				}
 			},
 			Err(msg) => println!("{}", msg),
