@@ -1,0 +1,6 @@
+[workspace]
+
+members = [
+	"lambda_calculus",
+	"interactive",
+]
