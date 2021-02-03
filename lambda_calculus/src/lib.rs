@@ -37,6 +37,7 @@ impl LambdaExpr {
 			LambdaExpr::Lambda(arg, body) => {
 				let reserved = expr.free().update(var.clone());
 				if reserved.contains(arg) {
+					let reserved = reserved.union(body.free());
 					let new_arg = NameGenerator::new().find(|n| !reserved.contains(n)).unwrap();
 					Rc::new(LambdaExpr::Lambda(new_arg.clone(),
 						body.clone()
