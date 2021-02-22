@@ -149,6 +149,34 @@ impl LambdaExpr {
 			}
 		}
 	}
+	
+	pub fn to_cl(self: Rc<LambdaExpr>) -> Rc<LambdaExpr> {
+		match &*self {
+			LambdaExpr::Var(name) => Rc::new(LambdaExpr::Var(name.clone())),
+			LambdaExpr::Apply(lhs, rhs) => Rc::new(LambdaExpr::Apply(lhs.clone().to_cl(), rhs.clone().to_cl())),
+			LambdaExpr::Lambda(arg, body) => {
+				match &*body.clone().to_cl() {
+					LambdaExpr::Var(name) if name == arg =>
+						Rc::new(LambdaExpr::Apply(
+							Rc::new(LambdaExpr::Apply(
+								Rc::new(LambdaExpr::Var("S".into())),
+								Rc::new(LambdaExpr::Var("K".into())))),
+							Rc::new(LambdaExpr::Var("K".into())))),
+					body if !body.free().contains(arg) =>
+						Rc::new(LambdaExpr::Apply(
+							Rc::new(LambdaExpr::Var("K".into())),
+							Rc::new(body.clone()))),
+					LambdaExpr::Apply(lhs, rhs) =>
+						Rc::new(LambdaExpr::Apply(
+							Rc::new(LambdaExpr::Apply(
+								Rc::new(LambdaExpr::Var("S".into())),
+								Rc::new(LambdaExpr::Lambda(arg.clone(), lhs.clone())).to_cl())),
+							Rc::new(LambdaExpr::Lambda(arg.clone(), rhs.clone())).to_cl())),
+					_ => panic!("Invalid CL formula returned by to_cl"),
+				}
+			},
+		}
+	}
 }
 
 impl Display for LambdaExpr {

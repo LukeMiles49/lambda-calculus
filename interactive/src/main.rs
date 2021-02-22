@@ -14,6 +14,8 @@ fn main() {
 		
 		match LambdaExpr::parse(&mut input.chars().peekable()) {
 			Ok(mut expr) => {
+				println!("CL: {}", expr.clone().to_cl());
+				println!();
 				println!("{}", expr);
 				while let Some(new_expr) = LazyReduction::reduce_step(expr.clone()) {
 					stdin.read_line(&mut input).unwrap();
